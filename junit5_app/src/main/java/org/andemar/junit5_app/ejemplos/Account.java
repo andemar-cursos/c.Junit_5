@@ -2,16 +2,21 @@ package org.andemar.junit5_app.ejemplos;
 
 import java.math.BigDecimal;
 
-public class Cuenta {
-    private String Persona;
+public class Account {
+    private String persona;
     private BigDecimal saldo;
 
+    public Account(String persona, BigDecimal saldo) {
+        this.persona = persona;
+        this.saldo = saldo;
+    }
+
     public String getPersona() {
-        return Persona;
+        return persona;
     }
 
     public void setPersona(String persona) {
-        Persona = persona;
+        this.persona = persona;
     }
 
     public BigDecimal getSaldo() {
