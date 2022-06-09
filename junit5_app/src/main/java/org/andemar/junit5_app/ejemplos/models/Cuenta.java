@@ -1,6 +1,6 @@
 package org.andemar.junit5_app.ejemplos.models;
 
-import org.andemar.junit5_app.ejemplos.models.exceptions.DineroInsuficienteException;
+import org.andemar.junit5_app.ejemplos.exceptions.DineroInsuficienteException;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -8,6 +8,7 @@ import java.util.Objects;
 public class Cuenta {
     private String persona;
     private BigDecimal saldo;
+    private Banco banco;
 
     public Cuenta(String persona, BigDecimal saldo) {
         this.persona = persona;
@@ -40,6 +41,14 @@ public class Cuenta {
 
     public void credito(BigDecimal monto) {
         saldo = saldo.add(monto);
+    }
+
+    public Banco getBanco() {
+        return banco;
+    }
+
+    public void setBanco(Banco banco) {
+        this.banco = banco;
     }
 
     @Override

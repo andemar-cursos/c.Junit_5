@@ -1,4 +1,4 @@
-package org.andemar.junit5_app.ejemplos.models.exceptions;
+package org.andemar.junit5_app.ejemplos.exceptions;
 
 public class DineroInsuficienteException extends RuntimeException {
 

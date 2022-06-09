@@ -1,7 +1,8 @@
 package org.andemar.junit5_app.ejemplos;
 
+import org.andemar.junit5_app.ejemplos.exceptions.DineroInsuficienteException;
+import org.andemar.junit5_app.ejemplos.models.Banco;
 import org.andemar.junit5_app.ejemplos.models.Cuenta;
-import org.andemar.junit5_app.ejemplos.models.exceptions.DineroInsuficienteException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -64,5 +65,39 @@ class AccountTest {
         String actual = exception.getMessage();
         String esperado = "Dinero Insuficiente";
         assertEquals(esperado, actual);
+    }
+
+    @Test
+    void testTransferirDineroCuentas() {
+        Cuenta cuenta1 = new Cuenta("Andemar", new BigDecimal("2500"));
+        Cuenta cuenta2 = new Cuenta("Mashiro", new BigDecimal("1500.8989"));
+
+        Banco banco = new Banco();
+        banco.setNombre("Banco de la Tierra");
+        banco.transferir(cuenta2, cuenta1, new BigDecimal("500"));
+        assertEquals("1000.8989", cuenta2.getSaldo().toPlainString());
+        assertEquals("3000", cuenta1.getSaldo().toPlainString());
+    }
+
+
+    @Test
+    void testRelacionesBancoCuentas() {
+        Cuenta cuenta1 = new Cuenta("Andemar", new BigDecimal("2500"));
+        Cuenta cuenta2 = new Cuenta("Mashiro", new BigDecimal("1500.8989"));
+
+        Banco banco = new Banco();
+        banco.addCuenta(cuenta1);
+        banco.addCuenta(cuenta2);
+
+        String name = "Banco de la Tierra";
+        banco.setNombre(name);
+        banco.transferir(cuenta2, cuenta1, new BigDecimal("500"));
+        assertEquals("1000.8989", cuenta2.getSaldo().toPlainString());
+        assertEquals("3000", cuenta1.getSaldo().toPlainString());
+
+        assertEquals(2, banco.getCuentas().size());
+        assertEquals(name, cuenta1.getBanco().getNombre());
+        assertEquals("Andemar", banco.getCuentas().stream().filter(c -> c.getPersona().equals("Andemar")).findFirst().get().getPersona());
+        assertTrue(banco.getCuentas().stream().anyMatch(c -> c.getPersona().equals("Andemar")));
     }
 }
