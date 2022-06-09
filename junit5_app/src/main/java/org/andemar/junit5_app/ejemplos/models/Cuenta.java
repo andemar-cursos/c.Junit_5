@@ -1,4 +1,6 @@
-package org.andemar.junit5_app.ejemplos;
+package org.andemar.junit5_app.ejemplos.models;
+
+import org.andemar.junit5_app.ejemplos.models.exceptions.DineroInsuficienteException;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -29,7 +31,11 @@ public class Cuenta {
     }
 
     public void debito(BigDecimal monto) {
-        saldo = saldo.subtract(monto);
+        BigDecimal nuevoSaldo = saldo.subtract(monto);
+
+        if (nuevoSaldo.compareTo(BigDecimal.ZERO)  < 0) throw new DineroInsuficienteException("Dinero Insuficiente");
+
+        this.saldo = nuevoSaldo;
     }
 
     public void credito(BigDecimal monto) {
