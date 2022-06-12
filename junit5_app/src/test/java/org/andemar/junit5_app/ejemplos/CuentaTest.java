@@ -18,8 +18,11 @@ class AccountTest {
         String expected = "Andemar";
         String actual = account.getPersona();
 
-        assertEquals(expected, actual);
-        assertTrue(actual.equals(expected));
+        // Si se envia el string el valor se creara en memoria, al enviarse
+        // la lambda se ejecuta solo si la prueba falla
+        assertNotNull(account, () -> "La cuenta no puede ser nula");
+        assertEquals(expected, actual, () -> "El nombre de la cuenta no es correcto");
+        assertTrue(actual.equals(expected), () -> "nombre cuenta esperada deber ser igual a nombre cuenta real");
     }
 
     @Test
