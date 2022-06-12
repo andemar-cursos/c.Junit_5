@@ -8,10 +8,21 @@ import org.junit.jupiter.api.*;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS) Esto hace que solo se cree una instancia y no una nueva por test
 class AccountTest {
 
     Cuenta cuenta;
+
+    @BeforeAll
+    static void beforeAll() {
+        System.out.println("Inicializando la clase test...");
+    }
+
+    @AfterAll
+    static void afterAll() {
+        System.out.println("Finalizando la clase test...");
+    }
+
     @BeforeEach
     void initMetodoTest() {
         this.cuenta = new Cuenta("Andemar", new BigDecimal(123));
