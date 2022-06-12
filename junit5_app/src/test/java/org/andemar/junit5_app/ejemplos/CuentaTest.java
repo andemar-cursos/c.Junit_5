@@ -3,6 +3,8 @@ package org.andemar.junit5_app.ejemplos;
 import org.andemar.junit5_app.ejemplos.exceptions.DineroInsuficienteException;
 import org.andemar.junit5_app.ejemplos.models.Banco;
 import org.andemar.junit5_app.ejemplos.models.Cuenta;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -12,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AccountTest {
 
     @Test
+    @DisplayName("Probando nombre de la cuenta corriente!")
     void testAccountName() {
         Cuenta account = new Cuenta("Andemar", new BigDecimal(123));
 //        account.setPersona("Andemar");
@@ -26,6 +29,7 @@ class AccountTest {
     }
 
     @Test
+    @DisplayName("Se prueba el saldo de la cuenta corriente!, que no sea null, mayor que cero, valor esperado")
     void testSaldoCuenta() {
         Cuenta account = new Cuenta("Andemar", new BigDecimal("1000.12345"));
         assertEquals(1000.12345, account.getSaldo().doubleValue());
@@ -84,7 +88,9 @@ class AccountTest {
 
 
     @Test
+    @Disabled
     void testRelacionesBancoCuentas() {
+        fail();
         Cuenta cuenta1 = new Cuenta("Andemar", new BigDecimal("2500"));
         Cuenta cuenta2 = new Cuenta("Mashiro", new BigDecimal("1500.8989"));
 
