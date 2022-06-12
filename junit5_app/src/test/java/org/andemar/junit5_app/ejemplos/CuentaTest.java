@@ -92,12 +92,15 @@ class AccountTest {
         String name = "Banco de la Tierra";
         banco.setNombre(name);
         banco.transferir(cuenta2, cuenta1, new BigDecimal("500"));
-        assertEquals("1000.8989", cuenta2.getSaldo().toPlainString());
-        assertEquals("3000", cuenta1.getSaldo().toPlainString());
 
-        assertEquals(2, banco.getCuentas().size());
-        assertEquals(name, cuenta1.getBanco().getNombre());
-        assertEquals("Andemar", banco.getCuentas().stream().filter(c -> c.getPersona().equals("Andemar")).findFirst().get().getPersona());
-        assertTrue(banco.getCuentas().stream().anyMatch(c -> c.getPersona().equals("Andemar")));
+        assertAll(
+                () -> assertEquals("1000.8989", cuenta2.getSaldo().toPlainString()),
+                () -> assertEquals("3000", cuenta1.getSaldo().toPlainString()),
+                () -> assertEquals(2, banco.getCuentas().size()),
+                () -> assertEquals(name, cuenta1.getBanco().getNombre()),
+                () -> assertEquals("Andemar", banco.getCuentas().stream().filter(c -> c.getPersona().equals("Andemar")).findFirst().get().getPersona()),
+                () -> assertTrue(banco.getCuentas().stream().anyMatch(c -> c.getPersona().equals("Andemar")))
+        );
+
     }
 }
