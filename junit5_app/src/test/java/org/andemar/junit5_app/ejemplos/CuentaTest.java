@@ -3,9 +3,7 @@ package org.andemar.junit5_app.ejemplos;
 import org.andemar.junit5_app.ejemplos.exceptions.DineroInsuficienteException;
 import org.andemar.junit5_app.ejemplos.models.Banco;
 import org.andemar.junit5_app.ejemplos.models.Cuenta;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 
@@ -13,17 +11,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AccountTest {
 
+    Cuenta cuenta;
+    @BeforeEach
+    void initMetodoTest() {
+        this.cuenta = new Cuenta("Andemar", new BigDecimal(123));
+        System.out.println("Iniciando el metodo.");
+    }
+
+    @AfterEach
+    void tearDown() {
+        System.out.println("Finalizando el metodo.");
+    }
+
     @Test
     @DisplayName("Probando nombre de la cuenta corriente!")
     void testAccountName() {
-        Cuenta account = new Cuenta("Andemar", new BigDecimal(123));
-//        account.setPersona("Andemar");
+//        cuenta.setPersona("Andemar");
         String expected = "Andemar";
-        String actual = account.getPersona();
+        String actual = cuenta.getPersona();
 
         // Si se envia el string el valor se creara en memoria, al enviarse
         // la lambda se ejecuta solo si la prueba falla
-        assertNotNull(account, () -> "La cuenta no puede ser nula");
+        assertNotNull(cuenta, () -> "La cuenta no puede ser nula");
         assertEquals(expected, actual, () -> "El nombre de la cuenta no es correcto");
         assertTrue(actual.equals(expected), () -> "nombre cuenta esperada deber ser igual a nombre cuenta real");
     }
@@ -38,7 +47,7 @@ class AccountTest {
 
     @Test
     void testReferenciaDeCuenta() {
-        Cuenta cuenta = new Cuenta("Andemar Doe", new BigDecimal("8900.9997"));
+        cuenta = new Cuenta("Andemar Doe", new BigDecimal("8900.9997"));
         Cuenta cuenta2 = new Cuenta("Andemar Doe", new BigDecimal("8900.9997"));
 
 //        assertNotEquals(cuenta, cuenta2);
@@ -47,7 +56,7 @@ class AccountTest {
 
     @Test
     void testDebitoAccount() {
-        Cuenta cuenta = new Cuenta("Andemar", new BigDecimal("1000.12345"));
+        cuenta = new Cuenta("Andemar", new BigDecimal("1000.12345"));
         cuenta.debito(new BigDecimal(100));
         assertNotNull(cuenta.getSaldo());
         assertEquals(900, cuenta.getSaldo().intValue());
@@ -56,7 +65,7 @@ class AccountTest {
 
     @Test
     void testCreditoAccount() {
-        Cuenta cuenta = new Cuenta("Andemar", new BigDecimal("1000.12345"));
+        cuenta = new Cuenta("Andemar", new BigDecimal("1000.12345"));
         cuenta.credito(new BigDecimal(100));
         assertNotNull(cuenta.getSaldo());
         assertEquals(1100, cuenta.getSaldo().intValue());
@@ -65,7 +74,7 @@ class AccountTest {
 
     @Test
     void testDineroInsuficienteExceptionCuenta() {
-        Cuenta cuenta = new Cuenta("Andemar", new BigDecimal("1000.12345"));
+        cuenta = new Cuenta("Andemar", new BigDecimal("1000.12345"));
         Exception exception = assertThrows(DineroInsuficienteException.class, ()-> {
            cuenta.debito(new BigDecimal("1500"));
         });
@@ -88,9 +97,9 @@ class AccountTest {
 
 
     @Test
-    @Disabled
+    //@Disabled
     void testRelacionesBancoCuentas() {
-        fail();
+        //fail();
         Cuenta cuenta1 = new Cuenta("Andemar", new BigDecimal("2500"));
         Cuenta cuenta2 = new Cuenta("Mashiro", new BigDecimal("1500.8989"));
 
