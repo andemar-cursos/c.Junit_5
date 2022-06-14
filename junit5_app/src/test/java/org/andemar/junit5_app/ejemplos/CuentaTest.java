@@ -7,6 +7,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -156,6 +157,7 @@ class AccountTest {
         properties.forEach((key, value) -> System.out.println(key + ": " + value));
     }
 
+    // Variables de la JVM
     @Test
     @EnabledIfSystemProperty(named = "java.version", matches = "18.0.1.1")
     void testJavaVersion() { }
@@ -168,4 +170,19 @@ class AccountTest {
     @Test
     @EnabledIfSystemProperty(named = "ENV", matches = ".*dev.*")
     void testDev() { }
+
+    @Test
+    void imprimirVariablesAmbiente() {
+        Map<String, String> getenv = System.getenv();
+        getenv.forEach((key, value) -> System.out.println(key + ": " + value));
+    }
+
+    // Pruebas con las variables del sistema
+    @Test
+    @EnabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*jdk-17.*")
+    void testJavaHome() { }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "PROCESSOR_LEVEL", matches = "6")
+    void testProcesadores() { }
 }
