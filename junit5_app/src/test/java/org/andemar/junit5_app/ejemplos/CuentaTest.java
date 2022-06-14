@@ -4,8 +4,10 @@ import org.andemar.junit5_app.ejemplos.exceptions.DineroInsuficienteException;
 import org.andemar.junit5_app.ejemplos.models.Banco;
 import org.andemar.junit5_app.ejemplos.models.Cuenta;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 
 import java.math.BigDecimal;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS) Esto hace que solo se cree una instancia y no una nueva por test
@@ -130,6 +132,40 @@ class AccountTest {
                 () -> assertEquals("Andemar", banco.getCuentas().stream().filter(c -> c.getPersona().equals("Andemar")).findFirst().get().getPersona()),
                 () -> assertTrue(banco.getCuentas().stream().anyMatch(c -> c.getPersona().equals("Andemar")))
         );
-
     }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void testSoloWindows() { }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC})
+    void testSoloLinuxMac() { }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void testNoWindows() { }
+
+    @Test
+    @EnabledOnJre(JRE.JAVA_18)
+    void testSoloJdk18() { }
+
+    @Test
+    void imprimirSytemProperties() {
+        Properties properties = System.getProperties();
+        properties.forEach((key, value) -> System.out.println(key + ": " + value));
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "java.version", matches = "18.0.1.1")
+    void testJavaVersion() { }
+
+    @Test
+    @DisabledIfSystemProperty(named = "os.arch", matches = ".*32.*")
+    void testSolo64() {
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "ENV", matches = ".*dev.*")
+    void testDev() { }
 }
