@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS) Esto hace que solo se cree una instancia y no una nueva por test
 class AccountTest {
 
@@ -185,4 +186,29 @@ class AccountTest {
     @Test
     @EnabledIfEnvironmentVariable(named = "PROCESSOR_LEVEL", matches = "6")
     void testProcesadores() { }
+
+
+    @Test
+    void testSaldoCuentaDev() {
+        boolean isDev = "dev".equals(System.getenv("env"));
+
+        // Si la condicion se cumple, se ejecuta el test
+        assumeTrue(isDev);
+        Cuenta account = new Cuenta("Andemar", new BigDecimal("1000.12345"));
+        assertEquals(1000.12345, account.getSaldo().doubleValue());
+        assertFalse(account.getSaldo().compareTo(BigDecimal.ZERO) < 0);
+    }
+
+
+    @Test
+    void testSaldoCuentaDev2() {
+        boolean isDev = "dev".equals(System.getenv("env"));
+        Cuenta account = new Cuenta("Andemar", new BigDecimal("1000.12345"));
+
+        // Si la condicion se cumple, se ejecuta los test dentro de la expresion
+        assumingThat(isDev, () -> {
+                assertEquals(1000.12345, account.getSaldo().doubleValue());
+                assertFalse(account.getSaldo().compareTo(BigDecimal.ZERO) < 0);
+        });
+    }
 }
