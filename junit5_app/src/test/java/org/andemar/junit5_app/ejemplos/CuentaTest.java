@@ -170,63 +170,86 @@ class AccountTest {
         void testProcesadores() { }
     }
 
-    @Test
-    void testDineroInsuficienteExceptionCuenta() {
-        cuenta = new Cuenta("Andemar", new BigDecimal("1000.12345"));
-        Exception exception = assertThrows(DineroInsuficienteException.class, ()-> {
-            cuenta.debito(new BigDecimal("1500"));
-        });
-        String actual = exception.getMessage();
-        String esperado = "Dinero Insuficiente";
-        assertEquals(esperado, actual);
-    }
+    @Nested
+    class OtrosTest {
 
-    @Test
-        //@Disabled
-    void testRelacionesBancoCuentas() {
-        //fail();
-        Cuenta cuenta1 = new Cuenta("Andemar", new BigDecimal("2500"));
-        Cuenta cuenta2 = new Cuenta("Mashiro", new BigDecimal("1500.8989"));
+        @Test
+        void testDineroInsuficienteExceptionCuenta() {
+            cuenta = new Cuenta("Andemar", new BigDecimal("1000.12345"));
+            Exception exception = assertThrows(DineroInsuficienteException.class, ()-> {
+                cuenta.debito(new BigDecimal("1500"));
+            });
+            String actual = exception.getMessage();
+            String esperado = "Dinero Insuficiente";
+            assertEquals(esperado, actual);
+        }
 
-        Banco banco = new Banco();
-        banco.addCuenta(cuenta1);
-        banco.addCuenta(cuenta2);
+        @Test
+            //@Disabled
+        void testRelacionesBancoCuentas() {
+            //fail();
+            Cuenta cuenta1 = new Cuenta("Andemar", new BigDecimal("2500"));
+            Cuenta cuenta2 = new Cuenta("Mashiro", new BigDecimal("1500.8989"));
 
-        String name = "Banco de la Tierra";
-        banco.setNombre(name);
-        banco.transferir(cuenta2, cuenta1, new BigDecimal("500"));
+            Banco banco = new Banco();
+            banco.addCuenta(cuenta1);
+            banco.addCuenta(cuenta2);
 
-        assertAll(
-                () -> assertEquals("1000.8989", cuenta2.getSaldo().toPlainString()),
-                () -> assertEquals("3000", cuenta1.getSaldo().toPlainString()),
-                () -> assertEquals(2, banco.getCuentas().size()),
-                () -> assertEquals(name, cuenta1.getBanco().getNombre()),
-                () -> assertEquals("Andemar", banco.getCuentas().stream().filter(c -> c.getPersona().equals("Andemar")).findFirst().get().getPersona()),
-                () -> assertTrue(banco.getCuentas().stream().anyMatch(c -> c.getPersona().equals("Andemar")))
-        );
-    }
+            String name = "Banco de la Tierra";
+            banco.setNombre(name);
+            banco.transferir(cuenta2, cuenta1, new BigDecimal("500"));
 
-    @Test
-    void testSaldoCuentaDev() {
-        boolean isDev = "dev".equals(System.getenv("env"));
+            assertAll(
+                    () -> assertEquals("1000.8989", cuenta2.getSaldo().toPlainString()),
+                    () -> assertEquals("3000", cuenta1.getSaldo().toPlainString()),
+                    () -> assertEquals(2, banco.getCuentas().size()),
+                    () -> assertEquals(name, cuenta1.getBanco().getNombre()),
+                    () -> assertEquals("Andemar", banco.getCuentas().stream().filter(c -> c.getPersona().equals("Andemar")).findFirst().get().getPersona()),
+                    () -> assertTrue(banco.getCuentas().stream().anyMatch(c -> c.getPersona().equals("Andemar")))
+            );
+        }
 
-        // Si la condicion se cumple, se ejecuta el test
-        assumeTrue(isDev);
-        Cuenta account = new Cuenta("Andemar", new BigDecimal("1000.12345"));
-        assertEquals(1000.12345, account.getSaldo().doubleValue());
-        assertFalse(account.getSaldo().compareTo(BigDecimal.ZERO) < 0);
-    }
+        @Test
+        void testSaldoCuentaDev() {
+            boolean isDev = "dev".equals(System.getenv("env"));
+
+            // Si la condicion se cumple, se ejecuta el test
+            assumeTrue(isDev);
+            Cuenta account = new Cuenta("Andemar", new BigDecimal("1000.12345"));
+            assertEquals(1000.12345, account.getSaldo().doubleValue());
+            assertFalse(account.getSaldo().compareTo(BigDecimal.ZERO) < 0);
+        }
 
 
-    @Test
-    void testSaldoCuentaDev2() {
-        boolean isDev = "dev".equals(System.getenv("env"));
-        Cuenta account = new Cuenta("Andemar", new BigDecimal("1000.12345"));
+        @Test
+        void testSaldoCuentaDev2() {
+            boolean isDev = "dev".equals(System.getenv("env"));
+            Cuenta account = new Cuenta("Andemar", new BigDecimal("1000.12345"));
 
-        // Si la condicion se cumple, se ejecuta los test dentro de la expresion
-        assumingThat(isDev, () -> {
+            // Si la condicion se cumple, se ejecuta los test dentro de la expresion
+            assumingThat(isDev, () -> {
                 assertEquals(1000.12345, account.getSaldo().doubleValue());
                 assertFalse(account.getSaldo().compareTo(BigDecimal.ZERO) < 0);
-        });
+            });
+        }
+    }
+
+    @Nested
+    class LoopTests {
+
+        @DisplayName("Probando debito cuenta Repetir!!")
+        @RepeatedTest(value = 5, name = "{displayName}: Repeticion {currentRepetition} de {totalRepetitions}")
+        void testDebitoCuentaRepetir(RepetitionInfo info) {
+
+            if(info.getCurrentRepetition() == 3) {
+                System.out.println("Estamos en la repeticion : " + info.getCurrentRepetition());
+            }
+
+            cuenta.debito(new BigDecimal(100));
+            assertNotNull(cuenta.getSaldo());
+            assertEquals(23, cuenta.getSaldo().intValue());
+            assertEquals("23", cuenta.getSaldo().toPlainString());
+        }
+
     }
 }
