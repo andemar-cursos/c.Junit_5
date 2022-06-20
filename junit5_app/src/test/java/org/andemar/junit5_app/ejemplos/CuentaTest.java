@@ -45,6 +45,7 @@ class AccountTest {
         System.out.println("Finalizando el metodo.");
     }
 
+    @Tag("cuenta")
     @Nested
     @DisplayName("Test de cuenta: ")
     class CuentaTestNombreYSaldo {
@@ -82,6 +83,8 @@ class AccountTest {
 
     @Nested
     class CuentaOperarionesTest {
+
+        @Tag("cuenta")
         @Test
         void testDebitoAccount() {
             cuenta = new Cuenta("Andemar", new BigDecimal("1000.12345"));
@@ -100,6 +103,8 @@ class AccountTest {
             assertEquals("1100.12345", cuenta.getSaldo().toPlainString());
         }
 
+        @Tag("cuenta")
+        @Tag("Banco")
         @Test
         void testTransferirDineroCuentas() {
             Cuenta cuenta1 = new Cuenta("Andemar", new BigDecimal("2500"));
@@ -259,6 +264,7 @@ class AccountTest {
         }
     }
 
+    @Tag("param")
     @Nested
     class pruebasParametrizadas {
         @ParameterizedTest(name = "Numero {index} ejecutando con valor {argumentsWithNames}")
