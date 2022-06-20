@@ -5,6 +5,8 @@ import org.andemar.junit5_app.ejemplos.models.Banco;
 import org.andemar.junit5_app.ejemplos.models.Cuenta;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -29,7 +31,7 @@ class AccountTest {
 
     @BeforeEach
     void initMetodoTest() {
-        this.cuenta = new Cuenta("Andemar", new BigDecimal(123));
+        this.cuenta = new Cuenta("Andemar", new BigDecimal(1000.12345));
         System.out.println("Iniciando el metodo.");
     }
 
@@ -249,6 +251,14 @@ class AccountTest {
             assertNotNull(cuenta.getSaldo());
             assertEquals(23, cuenta.getSaldo().intValue());
             assertEquals("23", cuenta.getSaldo().toPlainString());
+        }
+
+        @ParameterizedTest(name = "Numero {index} ejecutando con valor {argumentsWithNames}")
+        @ValueSource(strings = {"100", "200", "300", "500", "700", "1000"})
+        void testDebitoCuenta(String monto) {
+            cuenta.debito(new BigDecimal(monto));
+            assertNotNull(cuenta.getSaldo());
+            assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
         }
 
     }
