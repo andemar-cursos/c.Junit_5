@@ -257,7 +257,10 @@ class AccountTest {
             assertEquals(23, cuenta.getSaldo().intValue());
             assertEquals("23", cuenta.getSaldo().toPlainString());
         }
+    }
 
+    @Nested
+    class pruebasParametrizadas {
         @ParameterizedTest(name = "Numero {index} ejecutando con valor {argumentsWithNames}")
         @ValueSource(strings = {"100", "200", "300", "500", "700", "1000"})
         void testDebitoCuentaValueSource(String monto) {
@@ -270,6 +273,16 @@ class AccountTest {
         @ParameterizedTest(name = "Numero {index} ejecutando con valor {argumentsWithNames}")
         @CsvSource({"1,100", "2,200", "3,300", "4,500", "5,700", "6,1000"})
         void testDebitoCuentaCsvSource(String index, String monto) {
+            cuenta.debito(new BigDecimal(monto));
+            assertNotNull(cuenta.getSaldo());
+            assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+        }
+
+
+        @ParameterizedTest(name = "Numero {index} ejecutando con valor {argumentsWithNames}")
+        @CsvSource({"200,100", "300,250", "400,399", "600,500", "750,700", "1001,1000"})
+        void testDebitoCuentaCsvSource2(String saldo, String monto) {
+            cuenta.setSaldo(new BigDecimal(saldo));
             cuenta.debito(new BigDecimal(monto));
             assertNotNull(cuenta.getSaldo());
             assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
@@ -298,4 +311,5 @@ class AccountTest {
         }
 
     }
+
 }
