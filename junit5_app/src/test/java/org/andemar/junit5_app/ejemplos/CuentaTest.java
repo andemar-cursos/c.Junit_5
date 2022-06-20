@@ -12,10 +12,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
@@ -330,5 +332,30 @@ class AccountTest {
         }
 
     }
+
+    @Nested
+    @Tag("timeout")
+    class timeOut {
+        @Test
+        @Timeout(1)
+        void timeOut() throws InterruptedException {
+            TimeUnit.SECONDS.sleep(2);
+        }
+
+        @Test
+        @Timeout(value = 500, unit = TimeUnit.MILLISECONDS)
+        void timeOutMs() throws InterruptedException {
+            TimeUnit.SECONDS.sleep(1);
+        }
+
+        @Test
+        void testTimeoutAssertions() {
+            assertTimeout(Duration.ofMillis(500), () -> {
+                TimeUnit.MILLISECONDS.sleep(650);
+            });
+        }
+    }
+
+
 
 }
