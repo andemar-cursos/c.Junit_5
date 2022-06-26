@@ -25,11 +25,13 @@ public class ExamenServiceImpl implements ExamenService {
     @Override
     public Examen findExamenPorNombreConPreguntas(String nombre) {
         Optional<Examen> examenOptional = findExamenPorNombre(nombre);
-        Examen examen = examenOptional.orElseThrow();
+        Examen examen = examenOptional.orElse(null);
 
-        examen.setPreguntas(
-                preguntaRepository.findPreguntasPorExamenId(examen.getId())
-        );
+        if(examen != null) {
+            examen.setPreguntas(
+                    preguntaRepository.findPreguntasPorExamenId(examen.getId())
+            );
+        }
 
         return examen;
     }
