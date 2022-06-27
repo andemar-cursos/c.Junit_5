@@ -6,26 +6,36 @@ import org.andemar.appmockito.ejemplos.repositories.PreguntaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.mockito.Mockito.*;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class ExamenServiceImplTest {
 
+    @Mock
     ExamenRepository repository;
+    @Mock
     PreguntaRepository preguntaRepository;
-    ExamenService service;
+    @InjectMocks
+    ExamenServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        repository = mock(ExamenRepository.class);
-        preguntaRepository = mock(PreguntaRepository.class);
-        service = new ExamenServiceImpl(repository, preguntaRepository);
+//        MockitoAnnotations.openMocks(this); <- Permite habilitar las anotaciones @Mock
+//        repository = mock(ExamenRepository.class);
+//        preguntaRepository = mock(PreguntaRepository.class);
+//        service = new ExamenServiceImpl(repository, preguntaRepository);
     }
 
     @Test
