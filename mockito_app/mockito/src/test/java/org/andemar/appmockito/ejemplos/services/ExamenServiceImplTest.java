@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -140,6 +141,7 @@ class ExamenServiceImplTest {
         verify(preguntaRepository).findPreguntasPorExamenId(isNull());
     }
 
+    // El primero como que se perdió xD
     @Test
     void testArgumentMatchers() {
         when(repository.findAll()).thenReturn(Datos.EXAMENES);
@@ -149,6 +151,35 @@ class ExamenServiceImplTest {
 
         verify(repository).findAll();
 //        verify(preguntaRepository).findPreguntasPorExamenId(argThat(arg -> arg != null && arg.equals(5L)));
-        verify(preguntaRepository).findPreguntasPorExamenId(eq(5L));
+        verify(preguntaRepository).findPreguntasPorExamenId(argThat((argument) -> argument != null && argument > 0));
+    }
+
+    @Test
+    void testArgumentMatchers2() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        when(preguntaRepository.findPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
+        service.findExamenPorNombreConPreguntas("Matematicas");
+
+        verify(repository).findAll();
+        verify(preguntaRepository).findPreguntasPorExamenId(argThat(new MiArgsMatchers()));
+    }
+
+    public static class MiArgsMatchers implements ArgumentMatcher<Long> {
+
+        private Long argument;
+        private static final Long MIN_VALUE = 0L;
+
+        @Override
+        public boolean matches(Long argument) {
+            this.argument = argument;
+            return argument != null && argument > MIN_VALUE;
+        }
+
+        @Override
+        public String toString() {
+            return "Es para un mensaje personalizado " +
+                    "de error, cuando falla el test." +
+                    " El argumento es: " + argument + " y debe ser mayor a " + MIN_VALUE;
+        }
     }
 }
