@@ -7,10 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
@@ -32,6 +29,8 @@ class ExamenServiceImplTest {
     PreguntaRepository preguntaRepository;
     @InjectMocks
     ExamenServiceImpl service;
+    @Captor
+    ArgumentCaptor<Long> captor;
 
     @BeforeEach
     void setUp() {
@@ -181,5 +180,16 @@ class ExamenServiceImplTest {
                     "de error, cuando falla el test." +
                     " El argumento es: " + argument + " y debe ser mayor a " + MIN_VALUE;
         }
+    }
+
+    @Test
+    void testArgumentCaptor() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        service.findExamenPorNombreConPreguntas("Matematicas");
+
+        // Se puede crear una variable o usar la variable global
+//        ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
+        verify(preguntaRepository).findPreguntasPorExamenId(captor.capture());
+        assertEquals(5L, captor.getValue());
     }
 }
