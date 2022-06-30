@@ -2,7 +2,9 @@ package org.andemar.appmockito.ejemplos.services;
 
 import org.andemar.appmockito.ejemplos.models.Examen;
 import org.andemar.appmockito.ejemplos.repositories.ExamenRepository;
+import org.andemar.appmockito.ejemplos.repositories.ExamenRepositoryImpl;
 import org.andemar.appmockito.ejemplos.repositories.PreguntaRepository;
+import org.andemar.appmockito.ejemplos.repositories.PreguntaRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -24,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExamenServiceImplTest {
 
     @Mock
-    ExamenRepository repository;
+    ExamenRepositoryImpl repository;
     @Mock
-    PreguntaRepository preguntaRepository;
+    PreguntaRepositoryImpl preguntaRepository;
     @InjectMocks
     ExamenServiceImpl service;
     @Captor
@@ -35,8 +37,8 @@ class ExamenServiceImplTest {
     @BeforeEach
     void setUp() {
 //        MockitoAnnotations.openMocks(this); <- Permite habilitar las anotaciones @Mock
-//        repository = mock(ExamenRepository.class);
-//        preguntaRepository = mock(PreguntaRepository.class);
+//        repository = mock(ExamenRepositoryImpl.class);
+//        preguntaRepository = mock(PreguntaRepositoryImpl.class);
 //        service = new ExamenServiceImpl(repository, preguntaRepository);
     }
 
@@ -242,5 +244,17 @@ class ExamenServiceImplTest {
 
         verify(repository).guardar(any(Examen.class));
         verify(preguntaRepository).guardarVarias(anyList());
+    }
+
+    @Test
+    void testDoCallRealMethod() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+
+//        when(preguntaRepository.findPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
+        doCallRealMethod().when(preguntaRepository).findPreguntasPorExamenId(anyLong());
+
+        Examen examen = service.findExamenPorNombreConPreguntas("Matematicas");
+        assertEquals(5L, examen.getId());
+        assertEquals("Matematicas", examen.getNombre());
     }
 }
