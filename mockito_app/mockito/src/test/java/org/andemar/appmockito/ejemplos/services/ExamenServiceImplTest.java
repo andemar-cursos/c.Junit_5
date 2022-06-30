@@ -192,4 +192,13 @@ class ExamenServiceImplTest {
         verify(preguntaRepository).findPreguntasPorExamenId(captor.capture());
         assertEquals(5L, captor.getValue());
     }
+
+    @Test
+    void testDoThrow() {
+        Examen examen = Datos.EXAMEN;
+        examen.setPreguntas(Datos.PREGUNTAS);
+        doThrow(IllegalArgumentException.class).when(preguntaRepository).guardarVarias(anyList());
+
+        assertThrows(IllegalArgumentException.class, () -> service.guardar(examen));
+    }
 }
