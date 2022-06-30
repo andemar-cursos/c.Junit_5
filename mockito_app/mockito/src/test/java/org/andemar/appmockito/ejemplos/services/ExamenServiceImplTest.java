@@ -201,4 +201,46 @@ class ExamenServiceImplTest {
 
         assertThrows(IllegalArgumentException.class, () -> service.guardar(examen));
     }
+
+    @Test
+    void testDoAnswer() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+//        when(preguntaRepository.findPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
+        doAnswer(invocation -> {
+           Long id = invocation.getArgument(0);
+           return id == 5 ? Datos.PREGUNTAS : Collections.emptyList();
+        }).when(preguntaRepository).findPreguntasPorExamenId(anyLong());
+
+        Examen examen = service.findExamenPorNombreConPreguntas("Matematicas");
+
+        assertEquals(5L, examen.getId());
+        assertEquals("Matematicas", examen.getNombre());
+
+        verify(preguntaRepository).findPreguntasPorExamenId(anyLong());
+    }
+
+    @Test
+    void testDoAnswerGuardarExamen() {
+        // Given
+        Examen newExamen = Datos.EXAMEN;
+        newExamen.setPreguntas(Datos.PREGUNTAS);
+
+        doAnswer(invocation -> {
+            Long secuencia = 8L;
+            Examen examen = invocation.getArgument(0);
+            examen.setId(secuencia++);
+            return examen;
+        }).when(repository).guardar(any(Examen.class));
+
+        // When
+        Examen examen = service.guardar(newExamen);
+
+        // Then
+        assertNotNull(examen.getId());
+        assertEquals(8L, examen.getId());
+        assertEquals("Fisica", examen.getNombre());
+
+        verify(repository).guardar(any(Examen.class));
+        verify(preguntaRepository).guardarVarias(anyList());
+    }
 }
