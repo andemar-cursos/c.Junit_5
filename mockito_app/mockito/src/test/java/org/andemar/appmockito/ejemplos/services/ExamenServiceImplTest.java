@@ -311,4 +311,38 @@ class ExamenServiceImplTest {
         inOrder.verify(repository).findAll();
         inOrder.verify(preguntaRepository).findPreguntasPorExamenId(6L);
     }
+
+    @Test
+    void numeroDeInvocaciones() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        service.findExamenPorNombreConPreguntas("Matematicas");
+
+        // Numero exacto de veces
+        verify(preguntaRepository, times(1)).findPreguntasPorExamenId(5L);
+        // Al menos X veces
+        verify(preguntaRepository, atLeast(1)).findPreguntasPorExamenId(5L);
+        // Al menos una vez
+        verify(preguntaRepository, atLeastOnce()).findPreguntasPorExamenId(5L);
+        // Maximo X veces
+        verify(preguntaRepository, atMost(10)).findPreguntasPorExamenId(5L);
+        // Como maximo una vez
+        verify(preguntaRepository, atMostOnce()).findPreguntasPorExamenId(5L);
+    }
+
+    @Test
+    void testNumeroInvocaciones2() {
+        when(repository.findAll()).thenReturn(Collections.emptyList());
+        service.findExamenPorNombreConPreguntas("Matematicas");
+
+        // Validaciones, cuando un metodo nunca se llama
+        verify(preguntaRepository, never()).findPreguntasPorExamenId(anyLong());
+        verifyNoInteractions(preguntaRepository);
+
+        verify(repository).findAll();
+        verify(repository, times(1)).findAll();
+        verify(repository, atLeast(1)).findAll();
+        verify(repository, atLeastOnce()).findAll();
+        verify(repository, atMost(10)).findAll();
+        verify(repository, atMostOnce()).findAll();
+    }
 }
