@@ -66,6 +66,9 @@ class SpringbootTestApplicationTests {
         verify(cuentaRepository, times(2)).update(any(Cuenta.class));
         verify(bancoRepository, times(2)).findById(anyLong());
         verify(bancoRepository).update(any(Banco.class));
+
+        verify(cuentaRepository, times(6)).findById(anyLong());
+        verify(cuentaRepository, never()).findAll();
     }
 
     @Test
@@ -99,6 +102,21 @@ class SpringbootTestApplicationTests {
         verify(cuentaRepository, never()).update(any(Cuenta.class));
         verify(bancoRepository).findById(anyLong());
         verify(bancoRepository, never()).update(any(Banco.class));
+
+        verify(cuentaRepository, times(5)).findById(anyLong());
+        verify(cuentaRepository, never()).findAll();
     }
 
+    @Test
+    void contextLoads3() {
+        when(cuentaRepository.findById(1L)).thenReturn(crearCuenta001());
+
+        Cuenta cuenta1 = service.findById(1L);
+        Cuenta cuenta2 = service.findById(1L);
+
+        assertSame(cuenta1, cuenta2);
+        assertTrue(cuenta1 == cuenta2);
+        assertEquals("Andemar", cuenta2.getPersona());
+        verify(cuentaRepository, times(2)).findById(1L);
+    }
 }
