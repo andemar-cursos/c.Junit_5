@@ -5,6 +5,8 @@ import static org.mockito.Mockito.*;
 
 import com.andemar.cursos.data.Datos;
 import com.andemar.cursos.impls.CuentaServiceImpl;
+import com.andemar.cursos.models.Banco;
+import com.andemar.cursos.models.Cuenta;
 import com.andemar.cursos.repositories.BancoRepository;
 import com.andemar.cursos.repositories.CuentaRepository;
 import com.andemar.cursos.services.CuentaService;
@@ -45,6 +47,15 @@ class SpringbootTestApplicationTests {
         saldoDestino = service.revisarSaldo(2L);
         assertEquals("900", saldoOrigen.toPlainString());
         assertEquals("2100", saldoDestino.toPlainString());
+
+        int total = service.revisarTotalTransferencias(1L);
+        assertEquals(1, total);
+
+        verify(cuentaRepository, times(3)).findById(1L);
+        verify(cuentaRepository, times(3)).findById(2L);
+        verify(cuentaRepository, times(2)).update(any(Cuenta.class));
+        verify(bancoRepository, times(2)).findById(anyLong());
+        verify(bancoRepository).update(any(Banco.class));
     }
 
 }
