@@ -1,12 +1,6 @@
 package com.andemar.cursos;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static com.andemar.cursos.data.Datos.*;
-
-import com.andemar.cursos.data.Datos;
 import com.andemar.cursos.exceptions.DineroInsuficienteException;
-import com.andemar.cursos.impls.CuentaServiceImpl;
 import com.andemar.cursos.models.Banco;
 import com.andemar.cursos.models.Cuenta;
 import com.andemar.cursos.repositories.BancoRepository;
@@ -14,24 +8,28 @@ import com.andemar.cursos.repositories.CuentaRepository;
 import com.andemar.cursos.services.CuentaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
 
-@SpringBootTest
-class SpringbootTestApplicationTests {
+import static com.andemar.cursos.data.Datos.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-    @Mock
+@SpringBootTest
+class SpringbootTestApplicationWithIntegrationTests {
+
+    @MockBean
     CuentaRepository cuentaRepository;
-    @Mock
+    @MockBean
     BancoRepository bancoRepository;
 
-    // Como el constructor recibe los dos parametros de arriba, es necesario anotarlo como InjectMocks
-    // para que se inyecte las dependencias
-    @InjectMocks
-    CuentaServiceImpl service;
+    // Se necesita anotar como @Service para que quede en el contexto de spring como Bean.
+    // Al contrario de Mock, con Spring no se necesita la implementación, se puede usar la interfaz.
+    @Autowired
+    CuentaService service;
 
     @BeforeEach
     void setUp() {

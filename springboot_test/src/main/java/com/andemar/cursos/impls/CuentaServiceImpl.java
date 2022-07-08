@@ -5,9 +5,11 @@ import com.andemar.cursos.models.Cuenta;
 import com.andemar.cursos.repositories.BancoRepository;
 import com.andemar.cursos.repositories.CuentaRepository;
 import com.andemar.cursos.services.CuentaService;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@Service
 public class CuentaServiceImpl implements CuentaService {
 
     private CuentaRepository cuentaRepository;
