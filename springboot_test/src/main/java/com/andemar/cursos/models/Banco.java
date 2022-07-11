@@ -1,10 +1,17 @@
 package com.andemar.cursos.models;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
+@Table(name="bancos")
 public class Banco {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
+
+    @Column(name = "total_transferencias")
     private int totalTransferencia;
 
     public Banco() {
