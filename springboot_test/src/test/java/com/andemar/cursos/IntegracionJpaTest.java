@@ -63,4 +63,70 @@ public class IntegracionJpaTest {
         assertEquals("3000", cuenta.getSaldo().toPlainString());
 //        assertEquals(3, cuenta.getId());
     }
+
+    @Test
+    void testUpdate() {
+        //Given
+        Cuenta cuentaPepe = new Cuenta(null, "Pepe", new BigDecimal(3000));
+        cuentaRepository.save(cuentaPepe);
+
+        //When
+//        Cuenta cuenta = cuentaRepository.findByPersona("Pepe").orElseThrow();
+        // Tambien se puede usar el resultado de save, ya que es un retorno de la cuenta desde la DB cuando se inserta
+        Cuenta cuenta = cuentaRepository.findById(cuentaPepe.getId()).orElseThrow();
+
+        //Then
+        assertEquals("Pepe", cuenta.getPersona());
+        assertEquals("3000", cuenta.getSaldo().toPlainString());
+//        assertEquals(3, cuenta.getId());
+
+        //When
+        cuenta.setSaldo(new BigDecimal(3800));
+        Cuenta cuentaSave = cuentaRepository.save(cuenta);
+
+        //Then
+        assertEquals("3800", cuentaSave.getSaldo().toPlainString());
+
+    }
+
+    @Test
+    void testDeletePropio() {
+        //Given
+        Cuenta cuentaDelete = new Cuenta(null, "Delete", new BigDecimal("5000"));
+        cuentaRepository.save(cuentaDelete);
+
+        //When
+        Optional<Cuenta> cuentaDeleteSave = cuentaRepository.findById(cuentaDelete.getId());
+        Optional<Cuenta> cuentaAndemar    = cuentaRepository.findByPersona("Andemar");
+
+        //Then
+        assertTrue(cuentaDeleteSave.isPresent());
+        assertTrue(cuentaAndemar.isPresent());
+
+        //When
+        cuentaRepository.delete(cuentaDeleteSave.orElseThrow());
+        cuentaRepository.delete(cuentaAndemar.orElseThrow());
+
+        cuentaDeleteSave = cuentaRepository.findById(cuentaDelete.getId());
+        cuentaAndemar    = cuentaRepository.findByPersona("Andemar");
+
+       //Then
+        assertFalse(cuentaDeleteSave.isPresent());
+        assertFalse(cuentaAndemar.isPresent());
+    }
+
+    @Test
+    void testDelete() {
+        Cuenta cuenta = cuentaRepository.findById(2L).orElseThrow();
+        assertEquals("Mashiro", cuenta.getPersona());
+
+        cuentaRepository.delete(cuenta);
+
+        assertThrows(NoSuchElementException.class, () -> {
+            cuentaRepository.findByPersona("Mashiro").orElseThrow();
+            cuentaRepository.findById(2L).orElseThrow();
+        });
+
+        assertEquals(1, cuentaRepository.findAll().size());
+    }
 }
