@@ -10,8 +10,8 @@ public interface CuentaRepository extends JpaRepository<Cuenta, Long> {
 //    List<Cuenta> findAll();
 //    Cuenta findById(Long id);
 //    void update(Cuenta cuenta);
-    Cuenta findByPersona(String persona);
+    Optional<Cuenta> findByPersona(String persona);
 
-    @Query("select c from Cuenta where c.persona=?1")
+    @Query("select c from Cuenta c where c.persona = ?1")
     Optional<Cuenta> buscarPorPersona(String persona);
 }
