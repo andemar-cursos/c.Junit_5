@@ -11,7 +11,7 @@ public class Banco {
     private Long id;
     private String nombre;
 
-    @Column(name = "total_transferencias")
+    @Column(name = "total_transferencia")
     private int totalTransferencia;
 
     public Banco() {
