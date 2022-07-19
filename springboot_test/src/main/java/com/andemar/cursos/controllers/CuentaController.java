@@ -3,10 +3,8 @@ package com.andemar.cursos.controllers;
 import com.andemar.cursos.models.Cuenta;
 import com.andemar.cursos.models.DTO.TransaccionDTO;
 import com.andemar.cursos.services.CuentaService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -15,7 +13,7 @@ import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
 
-@Controller
+@RestController
 @RequestMapping("/api/cuentas")
 public class CuentaController {
 
