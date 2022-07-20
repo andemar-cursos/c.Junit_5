@@ -1,12 +1,19 @@
 package com.andemar.cursos.controllers;
 
+import com.andemar.cursos.models.DTO.TransaccionDTO;
 import com.andemar.cursos.services.CuentaService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +29,13 @@ class CuentaControllerTest {
 
     @MockBean
     private CuentaService cuentaService;
+
+    private ObjectMapper mapper;
+
+    @BeforeEach
+    void setUp() {
+        mapper = new ObjectMapper();
+    }
 
     @Test
     void testDetalle() throws Exception {
@@ -39,5 +53,24 @@ class CuentaControllerTest {
         verify(cuentaService).findById(1L);
     }
 
+    @Test
+    void testTransferir() throws Exception {
+        // Given
+        TransaccionDTO dto = new TransaccionDTO();
+        dto.setCuentaOrigenId(1L);
+        dto.setCuentaDestinoId(2L);
+        dto.setMonto(new BigDecimal("100"));
+        dto.setBancoId(1L);
 
+        // When
+        mvc.perform(post("/api/cuentas/transferir")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(dto)))
+                // THen
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.date").value(LocalDate.now().toString()))
+                .andExpect(jsonPath("$.mensaje").value("Transferencia realizada con exito"))
+                .andExpect(jsonPath("$.transaccion.cuentaOrigenId").value(1L));
+    }
 }
