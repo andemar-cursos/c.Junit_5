@@ -16,7 +16,7 @@ public class Datos {
     }
 
     public static Optional<Cuenta> crearCuenta002() {
-        return Optional.of(new Cuenta(2L, "Andemar", new BigDecimal("2000")));
+        return Optional.of(new Cuenta(2L, "Mashiro", new BigDecimal("2000")));
     }
 
     public static Optional<Banco> crearBanco001() {
