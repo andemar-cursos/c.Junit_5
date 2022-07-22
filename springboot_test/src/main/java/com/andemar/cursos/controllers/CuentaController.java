@@ -39,7 +39,8 @@ public class CuentaController {
     @PostMapping
     @ResponseStatus(CREATED)
     public Cuenta guardar(@RequestBody Cuenta cuenta) {
-        return null;
+        cuentaService.save(cuenta);
+        return cuenta;
     }
 
 
