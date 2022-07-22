@@ -19,6 +19,8 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 @SpringBootTest
 class SpringbootTestApplicationTests {
@@ -125,5 +127,22 @@ class SpringbootTestApplicationTests {
         assertTrue(cuenta1 == cuenta2);
         assertEquals("Andemar", cuenta2.getPersona());
         verify(cuentaRepository, times(2)).findById(1L);
+    }
+
+    @Test
+    void testFindALl() {
+        // Given
+        List<Cuenta> datos = Arrays.asList(crearCuenta001().orElseThrow(), crearCuenta002().orElseThrow());
+        when(cuentaRepository.findAll()).thenReturn(datos);
+
+        // When
+        List<Cuenta> cuentas = service.findAll();
+
+        // Then
+        assertFalse(cuentas.isEmpty());
+        assertEquals(2, cuentas.size());
+        assertTrue(cuentas.contains(crearCuenta001().orElseThrow()));
+
+        verify(cuentaRepository).findAll();
     }
 }

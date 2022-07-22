@@ -3,7 +3,6 @@ package com.andemar.cursos.controllers;
 import com.andemar.cursos.models.Cuenta;
 import com.andemar.cursos.models.DTO.TransaccionDTO;
 import com.andemar.cursos.services.CuentaService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
