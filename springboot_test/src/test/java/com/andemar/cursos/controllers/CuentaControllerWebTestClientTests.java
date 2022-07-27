@@ -15,9 +15,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.hamcrest.Matchers.*;
 
@@ -107,5 +109,48 @@ class CuentaControllerWebTestClientTests {
                    assertEquals("Andemar", cuenta.getPersona());
                    assertEquals("900.00", cuenta.getSaldo().toPlainString());
                 });
+    }
+
+    @Test
+    @Order(4)
+    void testListar() {
+        client.get().uri("/api/cuentas").exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$[0].persona").isEqualTo("Andemar")
+                .jsonPath("$[0].id").isEqualTo(1)
+                .jsonPath("$[0].saldo").isEqualTo(900)
+                .jsonPath("$[1].persona").isEqualTo("Mashiro")
+                .jsonPath("$[1].id").isEqualTo(2)
+                .jsonPath("$[1].saldo").isEqualTo(2100)
+                .jsonPath("$").isArray()
+                .jsonPath("$").value(hasSize(2));
+
+
+    }
+
+    @Test
+    @Order(5)
+    void testListar2() {
+        client.get().uri("/api/cuentas").exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBodyList(Cuenta.class)
+                .consumeWith(response -> {
+                    List<Cuenta> cuentas = response.getResponseBody();
+                    assertNotNull(cuentas);
+                    assertEquals(2, cuentas.size());
+                    assertEquals("Andemar", cuentas.get(0).getPersona());
+                    assertEquals(1L, cuentas.get(0).getId());
+                    assertEquals(900, cuentas.get(0).getSaldo().intValue());
+                    assertEquals("Mashiro", cuentas.get(1).getPersona());
+                    assertEquals(2L, cuentas.get(1).getId());
+                    assertEquals(2100, cuentas.get(1).getSaldo().intValue());
+                })
+                .hasSize(2)
+                .value(hasSize(2));
+
+
     }
 }
