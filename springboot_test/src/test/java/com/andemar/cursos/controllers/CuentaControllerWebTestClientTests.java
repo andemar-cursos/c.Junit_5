@@ -2,6 +2,7 @@ package com.andemar.cursos.controllers;
 
 import com.andemar.cursos.models.DTO.TransaccionDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -48,12 +50,26 @@ class CuentaControllerWebTestClientTests {
         response.put("transaccion", dto);
 
         // When
-        client.post().uri("http://localhost:8080/api/cuentas/transferir")
+        client.post().uri("/api/cuentas/transferir")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(dto)
                 .exchange()
+                // Then
                 .expectStatus().isOk()
                 .expectBody()
+                .consumeWith(respuesta -> {
+                    try {
+//                        String jsonStr = respuesta.getResponseBody();
+//                        JsonNode json = mapper.readTree(jsonStr);
+                        JsonNode json = mapper.readTree(respuesta.getResponseBody());
+                        assertEquals("Transferencia realizada con exito", json.path("mensaje").asText());
+                        assertEquals(1L, json.path("transaccion").path("cuentaOrigenId").asLong());
+                        assertEquals(LocalDate.now().toString(), json.path("date").asText());
+                        assertEquals("100", json.path("transaccion").path("monto").asText());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
                 .jsonPath("$.mensaje").isNotEmpty()
                 .jsonPath("$.mensaje").value(is("Transferencia realizada con exito"))
                 .jsonPath("$.mensaje").value(valor -> assertEquals("Transferencia realizada con exito", valor))
@@ -61,6 +77,5 @@ class CuentaControllerWebTestClientTests {
                 .jsonPath("$.transaccion.cuentaOrigenId").isEqualTo(dto.getCuentaOrigenId())
                 .jsonPath("$.date").isEqualTo(LocalDate.now().toString())
                 .json(mapper.writeValueAsString(response));
-
     }
 }
