@@ -43,7 +43,6 @@ public class CuentaController {
         return cuenta;
     }
 
-
     @PostMapping("/transferir")
     public ResponseEntity<?> transferir(@RequestBody TransaccionDTO dto){
         cuentaService.transferir(
@@ -59,6 +58,12 @@ public class CuentaController {
         response.put("transaccion", dto);
 
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(NO_CONTENT)
+    public void eliminar(@PathVariable Long id) {
+        cuentaService.deleteById(id);
     }
 
 }
