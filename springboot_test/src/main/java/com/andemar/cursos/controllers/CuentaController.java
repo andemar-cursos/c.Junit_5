@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -31,9 +32,14 @@ public class CuentaController {
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(OK)
-    public Cuenta detalle(@PathVariable("id") Long id) {
-        return cuentaService.findById(id);
+    public ResponseEntity<?> detalle(@PathVariable("id") Long id) {
+        Cuenta cuenta;
+        try {
+            cuenta = cuentaService.findById(id);
+        }catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(cuenta);
     }
 
     @PostMapping
