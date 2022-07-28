@@ -106,6 +106,7 @@ class CuentaControllerWebTestClientTests {
                 .expectBody(Cuenta.class)
                 .consumeWith(resp -> {
                    Cuenta cuenta = resp.getResponseBody();
+                   assertNotNull(cuenta);
                    assertEquals("Andemar", cuenta.getPersona());
                    assertEquals("900.00", cuenta.getSaldo().toPlainString());
                 });
@@ -150,7 +151,47 @@ class CuentaControllerWebTestClientTests {
                 })
                 .hasSize(2)
                 .value(hasSize(2));
+    }
 
+    @Test
+    @Order(6)
+    void testGuardar() {
+        // Given
+        Cuenta cuenta = new Cuenta(null, "Pepe", new BigDecimal("3000"));
 
+        // When
+        client.post().uri("/api/cuentas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(cuenta)
+                .exchange()
+                // Then
+                .expectStatus().isCreated()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(3)
+                .jsonPath("$.persona").value(is("Pepe"))
+                .jsonPath("$.saldo").isEqualTo(3000);
+    }
+
+    @Test
+    @Order(7)
+    void testGuardar2() {
+        // Given
+        Cuenta cuenta = new Cuenta(null, "Pepa", new BigDecimal("3500"));
+
+        // When
+        client.post().uri("/api/cuentas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(cuenta)
+                .exchange()
+                // Then
+                .expectBody(Cuenta.class)
+                .consumeWith(response -> {
+                    Cuenta c = response.getResponseBody();
+                    assertNotNull(c);
+                    assertEquals(4, c.getId());
+                    assertEquals("Pepa", c.getPersona());
+                    assertEquals("3500", c.getSaldo().toPlainString());
+                });
     }
 }
