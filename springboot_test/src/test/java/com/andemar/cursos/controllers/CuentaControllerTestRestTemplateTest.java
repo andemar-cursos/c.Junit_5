@@ -1,5 +1,6 @@
 package com.andemar.cursos.controllers;
 
+import com.andemar.cursos.models.Cuenta;
 import com.andemar.cursos.models.DTO.TransaccionDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -69,6 +70,21 @@ class CuentaControllerTestRestTemplateTest {
         response2.put("transaccion", dto);
 
         assertEquals(mapper.writeValueAsString(response2), json);
+    }
+
+    @Test
+    @Order(2)
+    void testDetalle() {
+        ResponseEntity<Cuenta> respuesta = client.getForEntity(getUrl("/api/cuentas/1"), Cuenta.class);
+        Cuenta cuenta = respuesta.getBody();
+        assertEquals(HttpStatus.OK, respuesta.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, respuesta.getHeaders().getContentType());
+
+        assertNotNull(cuenta);
+        assertEquals(1L, cuenta.getId());
+        assertEquals("Andemar", cuenta.getPersona());
+        assertEquals("900.00", cuenta.getSaldo().toPlainString());
+        assertEquals(new Cuenta(1L, "Andemar", new BigDecimal("900.00")), cuenta    );
     }
 
     private String getUrl(String uri) {
