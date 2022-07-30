@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -128,6 +129,32 @@ class CuentaControllerTestRestTemplateTest {
         assertNotNull(cuentaCreada);
         assertEquals("Pepa", cuentaCreada.getPersona());
         assertEquals("3400", cuentaCreada.getSaldo().toPlainString());
+    }
+
+    @Test
+    @Order(5)
+    void testEliminar() {
+        ResponseEntity<Cuenta[]> respuesta = client.getForEntity(getUrl("/api/cuentas"), Cuenta[].class);
+        List<Cuenta> cuentas = Arrays.asList(respuesta.getBody());
+        assertEquals(3, cuentas.size());
+
+//        client.delete(getUrl("/api/cuentas/3"));
+        Map<String, Long> pathVariables = new HashMap<>();
+        pathVariables.put("id", 3L);
+        // O también getUrl("/api/cuentas/3")
+        ResponseEntity<Void> exchange = client.exchange(getUrl("/api/cuentas/{id}"), HttpMethod.DELETE, null, Void.class,
+                pathVariables);
+        assertEquals(HttpStatus.NO_CONTENT, exchange.getStatusCode());
+        assertFalse(exchange.hasBody());
+
+
+        respuesta = client.getForEntity(getUrl("/api/cuentas"), Cuenta[].class);
+        cuentas = Arrays.asList(respuesta.getBody());
+        assertEquals(2, cuentas.size());
+
+        ResponseEntity<Cuenta> respuesta2 = client.getForEntity(getUrl("/api/cuentas/3"), Cuenta.class);
+        assertEquals(HttpStatus.NOT_FOUND, respuesta2.getStatusCode());
+        assertFalse(respuesta2.hasBody());
     }
 
     private String getUrl(String uri) {
