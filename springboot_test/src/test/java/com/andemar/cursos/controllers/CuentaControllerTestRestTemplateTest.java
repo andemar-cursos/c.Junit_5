@@ -115,6 +115,21 @@ class CuentaControllerTestRestTemplateTest {
         assertEquals("2100.0", json.get(1).path("saldo").asText());
     }
 
+    @Test
+    @Order(4)
+    void testGuardar() {
+        Cuenta cuenta = new Cuenta(null, "Pepa", new BigDecimal("3400"));
+        ResponseEntity<Cuenta> respuesta = client.postForEntity(getUrl("/api/cuentas"), cuenta, Cuenta.class);
+
+        assertEquals(HttpStatus.CREATED, respuesta.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, respuesta.getHeaders().getContentType());
+
+        Cuenta cuentaCreada = respuesta.getBody();
+        assertNotNull(cuentaCreada);
+        assertEquals("Pepa", cuentaCreada.getPersona());
+        assertEquals("3400", cuentaCreada.getSaldo().toPlainString());
+    }
+
     private String getUrl(String uri) {
         return "http://localhost:" + port + uri;
     }
